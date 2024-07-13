@@ -1,0 +1,11 @@
+[package]
+name = "TrafficTracker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = "1"
+serde_json = "1"
+serde_derive = "1"
+dirs = "5"
+num-bigint = "0"
