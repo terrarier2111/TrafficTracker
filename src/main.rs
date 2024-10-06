@@ -18,9 +18,8 @@ fn main() {
     // handle cases in which the machine was restarted and thus byte counts got reset
     let meta = {
         let mut meta = Meta::load();
-        let outbound = fetch_outbound_bytes();
-        if BigUint::from_str(&meta.starting_bytes).unwrap() > outbound {
-            meta.starting_bytes = outbound.to_string();
+        if BigUint::from_str(&meta.starting_bytes).unwrap() > fetch_outbound_bytes() {
+            meta.starting_bytes = "0".to_string();
             meta.store();
         }
         meta
@@ -251,14 +250,10 @@ impl Meta {
 fn current_time_millis() -> u128 {
     let now = SystemTime::now();
     let duration_since_epoch = now.duration_since(UNIX_EPOCH).unwrap();
-    
+
     duration_since_epoch.as_millis()
 }
 
 fn log(val: &str) {
-    println!(
-        "[{}] {}",
-        Local::now().format("%Y-%m-%d %H:%M:%S"),
-        val
-    );
+    println!("[{}] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), val);
 }
