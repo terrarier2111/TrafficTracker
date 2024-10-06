@@ -7,7 +7,17 @@ use num_bigint::{BigUint, ToBigUint};
 use serde_derive::{Deserialize, Serialize};
 
 fn main() {
-    let meta = Arc::new(Mutex::new(Meta::load()));
+    // handle cases in which the machine was restarted and thus byte counts got reset
+    let meta = {
+        let mut meta = Meta::load();
+        let outbound = fetch_outbound_bytes();
+        if BigUint::from_str(&meta.starting_bytes).unwrap() > outbound {
+            meta.starting_bytes = outbound.to_string();
+            meta.store();
+        }
+        meta
+    };
+    let meta = Arc::new(Mutex::new(meta));
     let config = Config::load();
     let save_ms = config.save_interval_ms;
     let meta2 = meta.clone();
